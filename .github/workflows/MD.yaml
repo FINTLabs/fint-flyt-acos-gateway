@@ -17,24 +17,12 @@ on:
         type: choice
         options:
           - afk-no
-          - agderfk-no
           - bfk-no
-          - ffk-no
-          - fintlabs-no
-          - innlandetfylke-no
-          - mrfylke-no
-          - nfk-no
           - ofk-no
-          - rogfk-no
-          - telemarkfylke-no
-          - tromsfylke-no
-          - trondelagfylke-no
-          - vestfoldfylke-no
-          - vlfk-no
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: fintlabs/fint-flyt-acos-gateway
   CLUSTER_NAME: ${{ inputs.cluster }}
   ORG: ${{ inputs.org }}
 
@@ -65,7 +53,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '25'
       - uses: gradle/actions/wrapper-validation@v5
       - uses: gradle/actions/setup-gradle@v5
         with:

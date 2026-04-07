@@ -1,5 +1,5 @@
 fint:
-  application-id: fint-flyt-acos-instance-gateway
+  application-id: fint-flyt-acos-gateway
 
 logging:
   level:
@@ -16,12 +16,8 @@ spring:
     include:
       - flyt-kafka
       - flyt-logging
-      - flyt-resource-server
+      - flyt-web-resource-server
       - flyt-file-client
   output:
     ansi:
       enabled: always
-
-  http:
-    codecs:
-      max-in-memory-size: 100MB
