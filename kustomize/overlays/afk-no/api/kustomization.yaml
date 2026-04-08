@@ -20,7 +20,7 @@ patches:
         value: "afk.no"
       - op: replace
         path: "/spec/ingress/basePath"
-        value: "/afk-no/api/acos/instances"
+        value: "/afk-no/api/acos"
       - op: replace
         path: "/spec/probes/readiness/path"
         value: "/afk-no/actuator/health" 

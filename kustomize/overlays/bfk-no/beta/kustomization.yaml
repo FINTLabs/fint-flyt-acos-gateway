@@ -20,7 +20,7 @@ patches:
         value: "bfk.no"
       - op: replace
         path: "/spec/ingress/basePath"
-        value: "/beta/bfk-no/api/acos/instances"
+        value: "/beta/bfk-no/api/acos"
       - op: replace
         path: "/spec/probes/readiness/path"
         value: "/beta/bfk-no/actuator/health"
