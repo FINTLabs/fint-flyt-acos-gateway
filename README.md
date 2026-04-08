@@ -9,11 +9,11 @@ web-instance-gateway components for integration lookup, validation, and archivin
 
 ## Highlights
 
-- **External ACOS ingress** — Spring MVC controller under `/api/external/acos/instances` receives ACOS payloads and
+- **External ACOS ingress** — Spring MVC controller under `/api/acos/instances` receives ACOS payloads and
   hands
   them through the shared `InstanceProcessor` so integration-specific flows (routing, validation, archival) remain
   centralized.
-- **External ACOS metadata ingress** — Spring MVC controller under `/api/external/acos/metadata` accepts ACOS form
+- **External ACOS metadata ingress** — Spring MVC controller under `/api/acos/metadata` accepts ACOS form
   definitions, validates the structure, maps them to Flyt `IntegrationMetadata`, and emits discovery events on Kafka.
 - **Instance-to-archive mapping** — `AcosInstanceMapper` converts elements into key/value maps, persists the rendered
   PDF + attachments through the Flyt file service, and returns `InstanceObject` graphs compatible with the downstream
@@ -43,13 +43,13 @@ web-instance-gateway components for integration lookup, validation, and archivin
 
 ## HTTP API
 
-Base paths: `/api/external/acos/instances` and `/api/external/acos/metadata`
+Base paths: `/api/acos/instances` and `/api/acos/metadata`
 
 | Method | Path                                       | Description                                                                                                                                                                         | Request body                     | Response                                                                                                                                                                  |
 |--------|--------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `POST` | `/`                                        | Receives an ACOS instance, validates metadata + base64 sections, persists files, and forwards the resulting `InstanceObject` to the configured integration via `InstanceProcessor`. | `AcosInstance` JSON (see below). | `202 Accepted` when the processor takes ownership, or integration-specific error codes (e.g., validation, no integration, deactivated) surfaced from `InstanceProcessor`. |
 | `GET`  | `/{sourceApplicationInstanceId}/case-info` | Looks up the archive case tied to the ACOS instance ID, enriches it with manager, administrative unit, and status details, and returns a `CaseInfo` snapshot.                       | –                                | `200 OK` with `CaseInfo`, `404` when no case is found, `401/403` on auth failures.                                                                                        |
-| `POST` | `/api/external/acos/metadata`              | Validates an ACOS form definition, converts it to Flyt `IntegrationMetadata`, and publishes it as an `integration-metadata-received` event.                                        | `AcosFormDefinition` JSON.       | `202 Accepted` on success, `422 Unprocessable Entity` for validation errors, `401/403` on auth failures.                                                                 |
+| `POST` | `/api/acos/metadata`                       | Validates an ACOS form definition, converts it to Flyt `IntegrationMetadata`, and publishes it as an `integration-metadata-received` event.                                        | `AcosFormDefinition` JSON.       | `202 Accepted` on success, `422 Unprocessable Entity` for validation errors, `401/403` on auth failures.                                                                 |
 
 Example `AcosInstance` payload:
 
