@@ -47,6 +47,7 @@ dependencies {
     implementation("no.novari:flyt-web-instance-gateway:1.3.7")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-core")
     testImplementation("org.mockito.kotlin:mockito-kotlin:6.2.3")
 }
 
