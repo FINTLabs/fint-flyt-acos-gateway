@@ -1,11 +1,11 @@
 apiVersion: fintlabs.no/v1alpha1
 kind: Application
 metadata:
-  name: fint-flyt-acos-instance-gateway
+  name: fint-flyt-acos-gateway
   namespace: fintlabs-no
   labels:
-    app.kubernetes.io/name: fint-flyt-acos-instance-gateway
-    app.kubernetes.io/instance: fint-flyt-acos-instance-gateway_fintlabs_no
+    app.kubernetes.io/name: fint-flyt-acos-gateway
+    app.kubernetes.io/instance: fint-flyt-acos-gateway_fintlabs_no
     app.kubernetes.io/version: latest
     app.kubernetes.io/component: backend
     app.kubernetes.io/part-of: fint-flyt
@@ -15,7 +15,7 @@ spec:
   port: 8080
   imagePullPolicy: Always
   orgId: fintlabs.no
-  image: ghcr.io/fintlabs/fint-flyt-acos-instance-gateway:sha-0000000
+  image: ghcr.io/fintlabs/fint-flyt-acos-gateway:sha-0000000
   kafka:
     enabled: true
     acls:
@@ -23,7 +23,7 @@ spec:
         topic: 'no-permission'
   url:
     hostname: flyt.vigoiks.no
-    basePath: path
+    basePath: ""
   ingress:
     enabled: true
     basePath: path

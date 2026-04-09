@@ -1,0 +1,8 @@
+novari:
+  flyt:
+    web-resource-server:
+      security:
+        api:
+          external:
+            enabled: true
+            authorized-source-application-ids: 1

@@ -7,7 +7,7 @@ resources:
 
 labels:
   - pairs:
-      app.kubernetes.io/instance: fint-flyt-acos-instance-gateway_bfk_no
+      app.kubernetes.io/instance: fint-flyt-acos-gateway_bfk_no
       fintlabs.no/org-id: bfk.no
 
 patches:
@@ -19,11 +19,8 @@ patches:
         path: "/spec/orgId"
         value: "bfk.no"
       - op: replace
-        path: "/spec/url/basePath"
-        value: "/bfk-no"
-      - op: replace
         path: "/spec/ingress/basePath"
-        value: "/bfk-no/api/acos/instances"
+        value: "/bfk-no/api/acos"
       - op: replace
         path: "/spec/probes/readiness/path"
         value: "/bfk-no/actuator/health"
@@ -35,8 +32,12 @@ patches:
         value:
           name: novari.kafka.topic.org-id
           value: "bfk-no"
+      - op: add
+        path: "/spec/env/-"
+        value:
+          name: "server.servlet.context-path"
+          value: "/bfk-no"
 
     target:
       kind: Application
-      name: fint-flyt-acos-instance-gateway
-
+      name: fint-flyt-acos-gateway
