@@ -1,12 +1,12 @@
 package no.novari.flyt.acos.instance.gateway.codelist
 
-import no.fint.model.resource.FintLinks
-import no.fint.model.resource.administrasjon.personal.PersonalressursResource
-import no.fint.model.resource.arkiv.kodeverk.SaksstatusResource
-import no.fint.model.resource.arkiv.noark.AdministrativEnhetResource
-import no.fint.model.resource.arkiv.noark.ArkivressursResource
-import no.fint.model.resource.felles.PersonResource
 import no.novari.cache.FintCache
+import no.novari.fint.model.resource.FintLinks
+import no.novari.fint.model.resource.administrasjon.personal.PersonalressursResource
+import no.novari.fint.model.resource.arkiv.kodeverk.SaksstatusResource
+import no.novari.fint.model.resource.arkiv.noark.AdministrativEnhetResource
+import no.novari.fint.model.resource.arkiv.noark.ArkivressursResource
+import no.novari.fint.model.resource.felles.PersonResource
 import no.novari.flyt.acos.instance.gateway.codelist.links.ResourceLinkUtil
 import no.novari.kafka.consuming.ErrorHandlerConfiguration
 import no.novari.kafka.consuming.ErrorHandlerFactory

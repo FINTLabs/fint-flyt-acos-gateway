@@ -1,12 +1,12 @@
 package no.novari.flyt.acos.instance.gateway.caseinfo
 
-import no.fint.model.resource.administrasjon.personal.PersonalressursResource
-import no.fint.model.resource.arkiv.kodeverk.SaksstatusResource
-import no.fint.model.resource.arkiv.noark.AdministrativEnhetResource
-import no.fint.model.resource.arkiv.noark.ArkivressursResource
-import no.fint.model.resource.arkiv.noark.SakResource
-import no.fint.model.resource.felles.PersonResource
 import no.novari.cache.FintCache
+import no.novari.fint.model.resource.administrasjon.personal.PersonalressursResource
+import no.novari.fint.model.resource.arkiv.kodeverk.SaksstatusResource
+import no.novari.fint.model.resource.arkiv.noark.AdministrativEnhetResource
+import no.novari.fint.model.resource.arkiv.noark.ArkivressursResource
+import no.novari.fint.model.resource.arkiv.noark.SakResource
+import no.novari.fint.model.resource.felles.PersonResource
 import no.novari.flyt.acos.instance.gateway.codelist.links.ResourceLinkUtil.getFirstLink
 import no.novari.flyt.acos.instance.gateway.model.caseinfo.AdministrativeUnit
 import no.novari.flyt.acos.instance.gateway.model.caseinfo.CaseInfo
