@@ -9,7 +9,9 @@ plugins {
 
 group = "no.novari"
 version = "0.0.1-SNAPSHOT"
-val apiVersion = "4.0.10"
+
+val fintModelResourceVersion = "1.0.1"
+val fintResourceModelVersion = "4.0.10"
 
 kotlin {
     jvmToolchain(25)
@@ -39,11 +41,11 @@ dependencies {
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
-    implementation("no.fintlabs:fint-model-resource:0.5.0")
-    implementation("no.novari:fint-arkiv-resource-model-java:$apiVersion")
-    implementation("no.novari:fint-administrasjon-resource-model-java:$apiVersion")
+    implementation("no.novari:fint-model-resource:$fintModelResourceVersion")
+    implementation("no.novari:fint-arkiv-resource-model-java:$fintResourceModelVersion")
+    implementation("no.novari:fint-administrasjon-resource-model-java:$fintResourceModelVersion")
 
-    implementation("no.novari:flyt-web-instance-gateway:1.3.7")
+    implementation("no.novari:flyt-web-instance-gateway:2.0.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-core")
