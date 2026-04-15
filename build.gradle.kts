@@ -9,7 +9,7 @@ plugins {
 
 group = "no.novari"
 version = "0.0.1-SNAPSHOT"
-val apiVersion = "3.21.10"
+val apiVersion = "4.0.10"
 
 kotlin {
     jvmToolchain(25)
