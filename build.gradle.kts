@@ -40,10 +40,9 @@ dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("no.fintlabs:fint-model-resource:0.5.0")
-    implementation("no.fint:fint-arkiv-resource-model-java:$apiVersion")
-    implementation("no.fint:fint-administrasjon-resource-model-java:$apiVersion")
+    implementation("no.novari:fint-arkiv-resource-model-java:$apiVersion")
+    implementation("no.novari:fint-administrasjon-resource-model-java:$apiVersion")
 
-    implementation("no.novari:flyt-web-resource-server:2.0.0")
     implementation("no.novari:flyt-web-instance-gateway:1.3.7")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
