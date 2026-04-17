@@ -1,6 +1,6 @@
 package no.novari.flyt.acos.instance.gateway
 
-import no.fint.model.resource.arkiv.noark.SakResource
+import no.novari.fint.model.resource.arkiv.noark.SakResource
 import no.novari.flyt.gateway.webinstance.kafka.ArchiveCaseIdRequestService
 import no.novari.flyt.webresourceserver.security.client.sourceapplication.SourceApplicationAuthorizationService
 import org.springframework.security.core.Authentication

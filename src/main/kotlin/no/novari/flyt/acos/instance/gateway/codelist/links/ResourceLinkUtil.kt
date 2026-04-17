@@ -1,7 +1,7 @@
 package no.novari.flyt.acos.instance.gateway.codelist.links
 
-import no.fint.model.resource.FintLinks
-import no.fint.model.resource.Link
+import no.novari.fint.model.resource.FintLinks
+import no.novari.fint.model.resource.Link
 
 object ResourceLinkUtil {
     fun getFirstSelfLink(resource: FintLinks): String {

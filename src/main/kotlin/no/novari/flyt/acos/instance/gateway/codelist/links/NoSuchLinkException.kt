@@ -1,6 +1,6 @@
 package no.novari.flyt.acos.instance.gateway.codelist.links
 
-import no.fint.model.resource.FintLinks
+import no.novari.fint.model.resource.FintLinks
 
 class NoSuchLinkException(
     message: String,
