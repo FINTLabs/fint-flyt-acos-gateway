@@ -29,7 +29,7 @@ spec:
     basePath: path
   env:
     - name: JAVA_TOOL_OPTIONS
-      value: '-XX:+ExitOnOutOfMemoryError -Xmx700M'
+      value: '-XX:+ExitOnOutOfMemoryError -XX:MaxRAMPercentage=60'
   envFrom:
     - secretRef:
         name: fint-flyt-file-oauth2-client
@@ -38,7 +38,7 @@ spec:
       memory: "750Mi"
       cpu: "500m"
     requests:
-      memory: "512Mi"
+      memory: "750Mi"
       cpu: "100m"
   probes:
     readiness:
