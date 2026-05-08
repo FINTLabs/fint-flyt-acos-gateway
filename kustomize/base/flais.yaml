@@ -35,10 +35,10 @@ spec:
         name: fint-flyt-file-oauth2-client
   resources:
     limits:
-      memory: "750Mi"
+      memory: "1Gi"
       cpu: "500m"
     requests:
-      memory: "750Mi"
+      memory: "1Gi"
       cpu: "100m"
   probes:
     readiness:
