@@ -3,7 +3,6 @@ package no.novari.flyt.acos.discovery.gateway
 import no.novari.flyt.acos.discovery.gateway.model.acos.AcosFormDefinition
 import no.novari.flyt.webresourceserver.UrlPaths.EXTERNAL_API
 import no.novari.flyt.webresourceserver.security.client.sourceapplication.SourceApplicationAuthorizationService
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
@@ -26,8 +25,6 @@ class AcosIntegrationMetadataController(
         @RequestBody acosFormDefinition: AcosFormDefinition,
         authentication: Authentication,
     ): ResponseEntity<Void> {
-        log.info("Received acos form definition: {}", acosFormDefinition)
-
         acosFormDefinitionValidator.validate(acosFormDefinition)?.let { validationErrors ->
             throw ResponseStatusException(
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -44,9 +41,5 @@ class AcosIntegrationMetadataController(
         integrationMetadataProducerService.publishNewIntegrationMetadata(integrationMetadata)
 
         return ResponseEntity.accepted().build()
-    }
-
-    private companion object {
-        private val log = LoggerFactory.getLogger(AcosIntegrationMetadataController::class.java)
     }
 }
