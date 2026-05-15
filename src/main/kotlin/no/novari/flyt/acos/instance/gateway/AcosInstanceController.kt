@@ -6,7 +6,6 @@ import no.novari.flyt.acos.instance.gateway.model.acos.AcosInstance
 import no.novari.flyt.acos.instance.gateway.model.caseinfo.CaseInfo
 import no.novari.flyt.gateway.webinstance.InstanceProcessor
 import no.novari.flyt.webresourceserver.UrlPaths.EXTERNAL_API
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
@@ -49,11 +48,6 @@ class AcosInstanceController(
         @Valid @RequestBody acosInstance: AcosInstance,
         authentication: Authentication,
     ): ResponseEntity<Void> {
-        log.info("Received instance: {}", acosInstance)
         return instanceProcessor.processInstance(authentication, acosInstance)
-    }
-
-    private companion object {
-        private val log = LoggerFactory.getLogger(AcosInstanceController::class.java)
     }
 }
