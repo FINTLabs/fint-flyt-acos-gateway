@@ -4,7 +4,6 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
-import no.novari.flyt.acos.instance.gateway.validation.UniqueElementIds
 import no.novari.flyt.gateway.webinstance.validation.constraints.ValidBase64
 
 data class AcosInstance(
@@ -12,7 +11,6 @@ data class AcosInstance(
     @field:Valid
     val metadata: AcosInstanceMetadata,
     @field:NotEmpty
-    @field:UniqueElementIds
     @field:Valid
     val elements: List<@NotNull AcosInstanceElement>,
     @field:NotBlank

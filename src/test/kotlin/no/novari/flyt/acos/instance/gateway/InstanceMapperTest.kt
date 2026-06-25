@@ -148,4 +148,73 @@ class InstanceMapperTest {
 
         assertThat(instance).isEqualTo(expectedInstanceObject)
     }
+
+    @Test
+    fun shouldMapDuplicateElementIdsToLineSeparatedValues() {
+        val acosInstance =
+            AcosInstance(
+                metadata =
+                    AcosInstanceMetadata(
+                        formId = "TEST0488",
+                        instanceId = "100384",
+                    ),
+                formPdfBase64 = "formPdfBase64Value",
+                elements =
+                    listOf(
+                        AcosInstanceElement(
+                            id = "Rapport.Oppgi_navn_og1.0.Organisasjon2.Organisasjonsnavn1_1",
+                            value = "FIKTIV SERVICE AS",
+                        ),
+                        AcosInstanceElement(
+                            id = "Rapport.Oppgi_navn_og1.0.Organisasjon2.Organisasjonsnummer2_1",
+                            value = "123456789",
+                        ),
+                        AcosInstanceElement(
+                            id = "Rapport.Oppgi_navn_og1.0.Organisasjon2.Organisasjonsnavn1_1",
+                            value = "FIKTIV1 AS",
+                        ),
+                        AcosInstanceElement(
+                            id = "Rapport.Oppgi_navn_og1.0.Organisasjon2.Organisasjonsnummer2_1",
+                            value = "987654321",
+                        ),
+                        AcosInstanceElement(
+                            id = "Rapport.Oppgi_navn_og1.0.Organisasjon2.Organisasjonsnavn1_1",
+                            value = "FIKTIV2 AS",
+                        ),
+                        AcosInstanceElement(
+                            id = "Rapport.Oppgi_navn_og1.0.Organisasjon2.Organisasjonsnummer2_1",
+                            value = "789456123",
+                        ),
+                    ),
+            )
+
+        val expectedSkjemaPdfFile =
+            File(
+                name = "skjemaPdf",
+                sourceApplicationId = 1L,
+                sourceApplicationInstanceId = "100384",
+                type = MediaType.APPLICATION_PDF,
+                encoding = "UTF-8",
+                base64Contents = "formPdfBase64Value",
+            )
+
+        whenever(persistFile(expectedSkjemaPdfFile))
+            .thenReturn(UUID.fromString("391e9177-2790-469a-9f42-c8042731bc55"))
+
+        val instance =
+            acosInstanceMapper.map(
+                sourceApplicationId = 1L,
+                incomingInstance = acosInstance,
+                persistFile = persistFile,
+            )
+
+        assertThat(instance.valuePerKey)
+            .containsEntry(
+                "skjema.Rapport.Oppgi_navn_og1.0.Organisasjon2.Organisasjonsnavn1_1",
+                "FIKTIV SERVICE AS\nFIKTIV1 AS\nFIKTIV2 AS",
+            ).containsEntry(
+                "skjema.Rapport.Oppgi_navn_og1.0.Organisasjon2.Organisasjonsnummer2_1",
+                "123456789\n987654321\n789456123",
+            )
+    }
 }

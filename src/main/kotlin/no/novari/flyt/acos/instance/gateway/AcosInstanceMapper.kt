@@ -38,8 +38,10 @@ class AcosInstanceMapper : InstanceMapper<AcosInstance> {
     ): Map<String, String> {
         val valuePerKey =
             acosInstanceElements
-                .associate { acosInstanceElement ->
-                    "skjema.${acosInstanceElement.id}" to acosInstanceElement.value.orEmpty()
+                .groupBy(AcosInstanceElement::id)
+                .mapKeys { "skjema.${it.key}" }
+                .mapValues { (_, elements) ->
+                    elements.joinToString(separator = "\n") { it.value.orEmpty() }
                 }.toMutableMap()
 
         valuePerKey["skjemaPdf"] = formPdfFileId.toString()
