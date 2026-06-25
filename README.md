@@ -23,8 +23,9 @@ web-instance-gateway components for integration lookup, validation, and archivin
 - **Kafka-backed code list caches** — Dedicated consumer containers populate `FintCache` instances for
   `AdministrativEnhet`, `Arkivressurs`, `Saksstatus`, `Personalressurs`, and `Person` resources, ensuring case info
   enrichment works offline from upstream APIs.
-- **Payload safeguards** — Bean Validation checks for non-empty metadata, base64-encoded blobs, and unique element IDs (
-  `@UniqueElementIds`), while the resource server restricts calls to authorized source application IDs.
+- **Payload safeguards** — Bean Validation checks for non-empty metadata and base64-encoded blobs, while the resource
+  server restricts calls to authorized source application IDs. Repeated ACOS element IDs are accepted so list/repeating
+  group submissions can be received without losing values.
 
 ## Architecture Overview
 
@@ -33,12 +34,11 @@ web-instance-gateway components for integration lookup, validation, and archivin
 | `AcosInstanceController`                                                    | Hosts POST + GET endpoints, logs requests, resolves authenticated principals, and delegates to the instance processor or archive case service.                                      |
 | `AcosIntegrationMetadataController`                                         | Hosts the metadata endpoint, validates incoming form definitions, resolves the caller’s source application ID, and publishes mapped `IntegrationMetadata`.                           |
 | `InstanceProcessorConfiguration`                                            | Builds an `InstanceProcessor<AcosInstance>` via `InstanceProcessorFactoryService`, wiring metadata extractors (formId + instanceId) and the mapper.                                 |
-| `AcosFormDefinitionMapper` / `AcosFormDefinitionValidator`                  | Convert ACOS form definitions to Flyt discovery metadata and reject malformed payloads with Bean Validation plus duplicate-ID checks.                                                |
+| `AcosFormDefinitionMapper` / `AcosFormDefinitionValidator`                  | Convert ACOS form definitions to Flyt discovery metadata and reject malformed definition payloads with Bean Validation plus duplicate-ID checks.                                     |
 | `AcosInstanceMapper`                                                        | Turns ACOS elements/documents into Flyt `InstanceObject`s, uploads PDFs/attachments with a provided `persistFile` function, and injects generated file IDs into the instance graph. |
 | `CaseInfoMappingService`                                                    | Converts `SakResource` objects into lightweight `CaseInfo` DTOs using cached status, administrative unit, personnel, and person resources.                                          |
 | `ResourceEntityCacheConfiguration` & `ResourceEntityConsumersConfiguration` | Provision EHCache-backed `FintCache`s and Kafka request/reply consumers that refresh code lists whenever new resources arrive.                                                      |
 | `ResourceLinkUtil` & `NoSuchLinkException`                                  | Helper utilities for resolving `Link` relations from FINT resources with consistent error handling.                                                                                 |
-| `UniqueElementIds` / `UniqueElementIdsValidator`                            | Custom Jakarta Bean Validation constraint that reports duplicate element IDs and feeds offending keys back through Hibernate Validator payloads.                                    |
 | `External profiles & configuration`                                         | `application.yaml` auto-includes Flyt Kafka, logging, web-resource-server, and file-client profiles so the gateway boots with the standard Flyt infrastructure defaults.            |
 
 ## HTTP API
@@ -210,8 +210,8 @@ pipelines typically point Kustomize directly at the appropriate overlay.
   stay consistent.
 - The Kafka caches rely on link relations; if you add new enriched fields, ensure the upstream FintCache receives the
   linked resource and update ResourceLinkUtil helpers if new link types appear.
-- Bean Validation (@UniqueElementIds, @ValidBase64) only triggers when payloads are annotated with @Valid. Keep that in
-  mind if you introduce new controllers or DTOs.
+- Bean Validation (for example @ValidBase64) only triggers when payloads are annotated with @Valid. Keep that in mind if
+  you introduce new controllers or DTOs.
 - Flyway migrations live under src/main/resources/db/migration when database changes are needed (currently unused but
   follows Flyt conventions).
 
