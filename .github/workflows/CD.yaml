@@ -7,69 +7,17 @@ on:
     types:
       - completed
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: fintlabs/fint-flyt-acos-gateway
-
-permissions:
-  contents: read
-  packages: read
-
 jobs:
-  deploy-to-aks:
-    if: >
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_branch == 'main'
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        org:
-          - afk-no
-          - bfk-no
-          - ofk-no
-        cluster:
-          - aks-beta-fint-2021-11-23
-          - aks-api-fint-2022-02-08
-
-    steps:
-      - uses: actions/checkout@v5
-      - uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.workflow_run.head_sha }}
-      - uses: actions/github-script@v8
-        id: environment
-        with:
-          script: return '${{ matrix.cluster }}'.split('-')[1]
-          result-encoding: string
-      - uses: actions/github-script@v8
-        id: resource-group
-        with:
-          script: return 'rg-aks-${{ steps.environment.outputs.result }}'
-          result-encoding: string
-      - uses: azure/k8s-bake@v3
-        id: bake
-        with:
-          renderEngine: kustomize
-          kustomizationPath: kustomize/overlays/${{ matrix.org }}/${{ steps.environment.outputs.result }}
-      - uses: azure/login@v2
-        with:
-          creds: ${{ secrets[ format('AKS_{0}_FINT_GITHUB', steps.environment.outputs.result) ] }}
-      - uses: azure/use-kubelogin@v1
-        with:
-          kubelogin-version: 'v0.0.32'
-      - uses: azure/aks-set-context@v4
-        with:
-          cluster-name: ${{ matrix.cluster }}
-          resource-group: ${{ steps.resource-group.outputs.result }}
-          admin: true
-          use-kubelogin: true
-      - uses: azure/k8s-deploy@v5.0.3
-        with:
-          action: deploy
-          manifests: ${{ steps.bake.outputs.manifestsBundle }}
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.workflow_run.head_sha }}
-          namespace: ${{ matrix.org }}
+  deploy:
+    uses: FINTLabs/fint-flyt-github-workflows/.github/workflows/java-app-cd-deploy.yaml@main
+    with:
+      deploy-targets: |
+        [
+          {"org":"afk-no","cluster":"aks-beta-fint-2021-11-23"},
+          {"org":"afk-no","cluster":"aks-api-fint-2022-02-08"},
+          {"org":"bfk-no","cluster":"aks-beta-fint-2021-11-23"},
+          {"org":"bfk-no","cluster":"aks-api-fint-2022-02-08"},
+          {"org":"ofk-no","cluster":"aks-beta-fint-2021-11-23"},
+          {"org":"ofk-no","cluster":"aks-api-fint-2022-02-08"}
+        ]
+    secrets: inherit
