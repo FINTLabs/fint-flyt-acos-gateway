@@ -27,6 +27,9 @@ tasks.jar {
     isEnabled = false
 }
 
+extra["jackson-bom.version"] = "2.21.5"
+extra["log4j2.version"] = "2.25.5"
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-aop")
