@@ -5,6 +5,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     kotlin("jvm") version "2.3.10"
     kotlin("plugin.spring") version "2.3.10"
+    kotlin("kapt") version "2.3.10"
 }
 
 group = "no.novari"
@@ -36,21 +37,26 @@ dependencies {
     compileOnly("org.springframework.security:spring-security-config")
     compileOnly("org.springframework.security:spring-security-web")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("io.github.oshai:kotlin-logging-jvm:8.0.4")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("net.logstash.logback:logstash-logback-encoder:9.0")
 
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("no.novari:fint-model-resource:$fintModelResourceVersion")
     implementation("no.novari:fint-arkiv-resource-model-java:$fintResourceModelVersion")
     implementation("no.novari:fint-administrasjon-resource-model-java:$fintResourceModelVersion")
 
-    implementation("no.novari:flyt-web-instance-gateway:3.0.0")
+    implementation("no.novari:flyt-web-instance-gateway:3.1.0-rc-3")
     implementation("no.novari:flyt-cache:3.0.0")
+    implementation("no.novari:telemetry-starter:0.0.4")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-core")
     testImplementation("org.mockito.kotlin:mockito-kotlin:6.2.3")
+    testImplementation(kotlin("test"))
 }
 
 tasks.test {
