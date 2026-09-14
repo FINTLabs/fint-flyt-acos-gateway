@@ -5,7 +5,7 @@ novari:
   flyt:
     file-service-url: http://localhost:8091
 
-    web-instance-gateway:
+    gateway-starter:
       check-integration-exists: false
 
   kafka:

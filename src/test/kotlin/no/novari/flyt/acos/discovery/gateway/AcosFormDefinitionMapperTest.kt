@@ -5,11 +5,11 @@ import no.novari.flyt.acos.discovery.gateway.model.acos.AcosFormElement
 import no.novari.flyt.acos.discovery.gateway.model.acos.AcosFormMetadata
 import no.novari.flyt.acos.discovery.gateway.model.acos.AcosFormSavedValues
 import no.novari.flyt.acos.discovery.gateway.model.acos.AcosFormStep
-import no.novari.flyt.acos.discovery.gateway.model.fint.InstanceMetadataCategory
-import no.novari.flyt.acos.discovery.gateway.model.fint.InstanceMetadataContent
-import no.novari.flyt.acos.discovery.gateway.model.fint.InstanceObjectCollectionMetadata
-import no.novari.flyt.acos.discovery.gateway.model.fint.InstanceValueMetadata
-import no.novari.flyt.acos.discovery.gateway.model.fint.IntegrationMetadata
+import no.novari.flyt.gateway.metadata.model.InstanceMetadataCategory
+import no.novari.flyt.gateway.metadata.model.InstanceMetadataContent
+import no.novari.flyt.gateway.metadata.model.InstanceObjectCollectionMetadata
+import no.novari.flyt.gateway.metadata.model.InstanceValueMetadata
+import no.novari.flyt.gateway.metadata.model.IntegrationMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

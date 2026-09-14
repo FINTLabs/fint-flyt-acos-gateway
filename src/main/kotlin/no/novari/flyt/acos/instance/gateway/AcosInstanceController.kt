@@ -4,7 +4,7 @@ import jakarta.validation.Valid
 import no.novari.flyt.acos.instance.gateway.caseinfo.CaseInfoMappingService
 import no.novari.flyt.acos.instance.gateway.model.acos.AcosInstance
 import no.novari.flyt.acos.instance.gateway.model.caseinfo.CaseInfo
-import no.novari.flyt.gateway.webinstance.InstanceProcessor
+import no.novari.flyt.gateway.instance.InstanceProcessor
 import no.novari.flyt.webresourceserver.UrlPaths.EXTERNAL_API
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

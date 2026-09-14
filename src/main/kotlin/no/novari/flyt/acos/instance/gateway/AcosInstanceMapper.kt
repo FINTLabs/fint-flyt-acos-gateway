@@ -3,9 +3,9 @@ package no.novari.flyt.acos.instance.gateway
 import no.novari.flyt.acos.instance.gateway.model.acos.AcosDocument
 import no.novari.flyt.acos.instance.gateway.model.acos.AcosInstance
 import no.novari.flyt.acos.instance.gateway.model.acos.AcosInstanceElement
-import no.novari.flyt.gateway.webinstance.InstanceMapper
-import no.novari.flyt.gateway.webinstance.model.File
-import no.novari.flyt.gateway.webinstance.model.instance.InstanceObject
+import no.novari.flyt.gateway.instance.InstanceMapper
+import no.novari.flyt.gateway.instance.model.File
+import no.novari.flyt.gateway.instance.model.instance.InstanceObject
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import java.util.UUID

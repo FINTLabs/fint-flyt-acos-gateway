@@ -4,7 +4,7 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
-import no.novari.flyt.gateway.webinstance.validation.constraints.ValidBase64
+import no.novari.flyt.gateway.instance.validation.constraints.ValidBase64
 
 data class AcosInstance(
     @field:NotNull

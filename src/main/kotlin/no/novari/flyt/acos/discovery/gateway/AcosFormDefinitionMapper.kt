@@ -4,20 +4,21 @@ import no.novari.flyt.acos.discovery.gateway.model.acos.AcosFormDefinition
 import no.novari.flyt.acos.discovery.gateway.model.acos.AcosFormElement
 import no.novari.flyt.acos.discovery.gateway.model.acos.AcosFormSavedValues
 import no.novari.flyt.acos.discovery.gateway.model.acos.AcosFormStep
-import no.novari.flyt.acos.discovery.gateway.model.fint.InstanceMetadataCategory
-import no.novari.flyt.acos.discovery.gateway.model.fint.InstanceMetadataContent
-import no.novari.flyt.acos.discovery.gateway.model.fint.InstanceObjectCollectionMetadata
-import no.novari.flyt.acos.discovery.gateway.model.fint.InstanceValueMetadata
-import no.novari.flyt.acos.discovery.gateway.model.fint.IntegrationMetadata
+import no.novari.flyt.gateway.metadata.IntegrationMetadataMapper
+import no.novari.flyt.gateway.metadata.model.InstanceMetadataCategory
+import no.novari.flyt.gateway.metadata.model.InstanceMetadataContent
+import no.novari.flyt.gateway.metadata.model.InstanceObjectCollectionMetadata
+import no.novari.flyt.gateway.metadata.model.InstanceValueMetadata
+import no.novari.flyt.gateway.metadata.model.IntegrationMetadata
 import org.springframework.stereotype.Service
 
 @Service
-class AcosFormDefinitionMapper {
-    fun toIntegrationMetadata(
+class AcosFormDefinitionMapper : IntegrationMetadataMapper<AcosFormDefinition> {
+    override fun toIntegrationMetadata(
         sourceApplicationId: Long,
-        acosFormDefinition: AcosFormDefinition,
+        incomingMetadata: AcosFormDefinition,
     ): IntegrationMetadata {
-        val metadata = requireNotNull(acosFormDefinition.metadata)
+        val metadata = requireNotNull(incomingMetadata.metadata)
 
         return IntegrationMetadata(
             sourceApplicationId = sourceApplicationId,
@@ -29,7 +30,7 @@ class AcosFormDefinitionMapper {
                 InstanceMetadataContent(
                     instanceValueMetadata = listOf(createSkjemaPdfMetadata()),
                     instanceObjectCollectionMetadata = listOf(createVedleggMetadata()),
-                    categories = toMetadataCategories(acosFormDefinition),
+                    categories = toMetadataCategories(incomingMetadata),
                 ),
         )
     }

@@ -4,8 +4,8 @@ import no.novari.flyt.acos.instance.gateway.model.acos.AcosDocument
 import no.novari.flyt.acos.instance.gateway.model.acos.AcosInstance
 import no.novari.flyt.acos.instance.gateway.model.acos.AcosInstanceElement
 import no.novari.flyt.acos.instance.gateway.model.acos.AcosInstanceMetadata
-import no.novari.flyt.gateway.webinstance.model.File
-import no.novari.flyt.gateway.webinstance.model.instance.InstanceObject
+import no.novari.flyt.gateway.instance.model.File
+import no.novari.flyt.gateway.instance.model.instance.InstanceObject
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
