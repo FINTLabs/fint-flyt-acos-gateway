@@ -3,9 +3,10 @@
 Spring Boot Web service that ingests ACOS form submissions into FINT Flyt, persists binary payloads via the Flyt
 file service, hands structured content to the shared `InstanceProcessor`, and exposes a companion endpoint so clients
 can follow a submission’s progress inside the target archive system. The same application also accepts ACOS form
-definitions, maps them to Flyt `IntegrationMetadata`, and publishes them on Kafka for downstream discovery flows. It
-runs as a blocking OAuth2-protected gateway, keeps key code lists cached via Kafka, and reuses Flyt
-web-instance-gateway components for integration lookup, validation, and archiving.
+definitions, maps them to Flyt `IntegrationMetadata`, and delegates validation/publishing to the shared Flyt gateway
+starter for downstream discovery flows. It runs as a blocking OAuth2-protected gateway, keeps key code lists cached via
+Kafka, and reuses Flyt gateway starter components for integration lookup, validation, metadata publishing, and
+archiving.
 
 ## Highlights
 
@@ -32,7 +33,7 @@ web-instance-gateway components for integration lookup, validation, and archivin
 | Component                                                                   | Responsibility                                                                                                                                                                      |
 |-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `AcosInstanceController`                                                    | Hosts POST + GET endpoints, logs requests, resolves authenticated principals, and delegates to the instance processor or archive case service.                                      |
-| `AcosIntegrationMetadataController`                                         | Hosts the metadata endpoint, validates incoming form definitions, resolves the caller’s source application ID, and publishes mapped `IntegrationMetadata`.                           |
+| `AcosIntegrationMetadataController`                                         | Hosts the metadata endpoint and delegates validation, source application lookup, mapping, and publishing to the shared metadata processor.                                           |
 | `InstanceProcessorConfiguration`                                            | Builds an `InstanceProcessor<AcosInstance>` via `InstanceProcessorFactoryService`, wiring metadata extractors (formId + instanceId) and the mapper.                                 |
 | `AcosFormDefinitionMapper` / `AcosFormDefinitionValidator`                  | Convert ACOS form definitions to Flyt discovery metadata and reject malformed definition payloads with Bean Validation plus duplicate-ID checks.                                     |
 | `AcosInstanceMapper`                                                        | Turns ACOS elements/documents into Flyt `InstanceObject`s, uploads PDFs/attachments with a provided `persistFile` function, and injects generated file IDs into the instance graph. |
@@ -113,11 +114,11 @@ Validation failures surface as 400 Bad Request with Bean Validation messages; mi
   so later lookups avoid live API calls.
 - Topic names follow Flyt conventions via EntityTopicNameParameters + TopicNamePrefixParameters, inheriting org ID +
   domain-context from configuration.
-- InstanceProcessor (from no.novari:flyt-web-instance-gateway) performs the heavy lifting: fetching integration
-  metadata
+- InstanceProcessor (from `no.novari:flyt-gateway-starter`) performs the heavy lifting: fetching integration metadata
   over Kafka, invoking validators, managing file persistence, and publishing archive-ready instances.
-- Integration metadata publishing uses `ParameterizedTemplate<IntegrationMetadata>` and emits
-  `integration-metadata-received` so discovery flows can register or update integrations without a separate service.
+- Integration metadata handling uses `IntegrationMetadataProcessor` from `no.novari:flyt-gateway-starter`, while this
+  gateway only provides the ACOS-specific mapper and validator. The starter emits `integration-metadata-received` so
+  discovery flows can register or update integrations without a separate local producer implementation.
 - Error handling relies on ErrorHandlerFactory configured with no retries + skip-failed semantics, preventing poison
   records from blocking cache refresh.
 
@@ -139,7 +140,7 @@ local-staging profile overrides connectivity for local development.
 | spring.security.oauth2.resourceserver.jwt.issuer-uri                        | Identity provider used to validate inbound OAuth2 JWTs (default: https://idp.felleskomponent.no/nidp/oauth/nam). |
 | spring.security.oauth2.client.registration.file-service.*                   | Client credentials for the file-service OAuth client (injected via Kubernetes secrets).                          |
 | spring.kafka.bootstrap-servers & novari.kafka.*                             | Kafka connectivity, default replicas, topic org IDs, and domain context.                                         |
-| novari.flyt.web-instance-gateway.check-integration-exists                   | Local override that disables integration existence checks (handy for development).                               |
+| novari.flyt.gateway-starter.check-integration-exists                        | Local override that disables integration existence checks (handy for development).                               |
 | server.max-http-request-header-size                                         | Increases request header limits to accommodate large ACOS payloads.                                              |
 | server.servlet.context-path                                                 | Set per overlay so servlet routes, actuator endpoints, and ingress paths stay aligned.                           |
 | logging.level.*                                                             | Enables detailed client/debug logging during development.                                                        |
@@ -204,8 +205,8 @@ pipelines typically point Kustomize directly at the appropriate overlay.
 
 - When extending mapping logic, update AcosInstanceMapper and cover new behavior in InstanceMapperTest; the current test
   suite asserts PDF + attachment persistence and key generation.
-- When extending discovery behavior, update `AcosFormDefinitionMapper`/`AcosFormDefinitionValidator` and keep the
-  copied discovery tests aligned with the expected metadata contract.
+- When extending discovery behavior, update `AcosFormDefinitionMapper`/`AcosFormDefinitionValidator` and keep the tests
+  aligned with the metadata contract supplied by `flyt-gateway-starter`.
 - Use CaseInfoMappingService as the single place for archive-to-DTO transformations so cache lookups and null-handling
   stay consistent.
 - The Kafka caches rely on link relations; if you add new enriched fields, ensure the upstream FintCache receives the
