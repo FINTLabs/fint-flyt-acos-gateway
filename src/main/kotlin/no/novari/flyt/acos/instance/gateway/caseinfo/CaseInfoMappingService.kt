@@ -1,5 +1,6 @@
 package no.novari.flyt.acos.instance.gateway.caseinfo
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import no.novari.cache.FintCache
 import no.novari.fint.model.resource.administrasjon.personal.PersonalressursResource
 import no.novari.fint.model.resource.arkiv.kodeverk.SaksstatusResource
@@ -12,7 +13,6 @@ import no.novari.flyt.acos.instance.gateway.model.caseinfo.AdministrativeUnit
 import no.novari.flyt.acos.instance.gateway.model.caseinfo.CaseInfo
 import no.novari.flyt.acos.instance.gateway.model.caseinfo.CaseManager
 import no.novari.flyt.acos.instance.gateway.model.caseinfo.CaseStatus
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -71,7 +71,11 @@ class CaseInfoMappingService(
                 phone = personResource.kontaktinformasjon.mobiltelefonnummer,
             )
         }.getOrElse { exception ->
-            log.warn("No case manager for case with mappeId='{}'", caseResource.mappeId.identifikatorverdi, exception)
+            log.atWarn {
+                message = "No case manager for case with mappeId={}"
+                arguments = arrayOf(caseResource.mappeId.identifikatorverdi)
+                cause = exception
+            }
             null
         }
     }
@@ -88,11 +92,11 @@ class CaseInfoMappingService(
                 )
             AdministrativeUnit(name = administrativeUnitResource.navn)
         }.getOrElse { exception ->
-            log.warn(
-                "No administrative unit for case with mappeId='{}'",
-                caseResource.mappeId.identifikatorverdi,
-                exception,
-            )
+            log.atWarn {
+                message = "No administrative unit for case with mappeId={}"
+                arguments = arrayOf(caseResource.mappeId.identifikatorverdi)
+                cause = exception
+            }
             null
         }
     }
@@ -112,12 +116,16 @@ class CaseInfoMappingService(
                 code = caseStatusResource.kode,
             )
         }.getOrElse { exception ->
-            log.warn("No status for case with mappeId='{}'", caseResource.mappeId.identifikatorverdi, exception)
+            log.atWarn {
+                message = "No status for case with mappeId={}"
+                arguments = arrayOf(caseResource.mappeId.identifikatorverdi)
+                cause = exception
+            }
             null
         }
     }
 
     private companion object {
-        private val log = LoggerFactory.getLogger(CaseInfoMappingService::class.java)
+        private val log = KotlinLogging.logger {}
     }
 }

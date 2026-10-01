@@ -63,6 +63,7 @@ dependencies {
     compileOnly("org.springframework.security:spring-security-config")
     compileOnly("org.springframework.security:spring-security-web")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("io.github.oshai:kotlin-logging-jvm:8.0.4")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
