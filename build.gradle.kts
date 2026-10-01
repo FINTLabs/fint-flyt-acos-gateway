@@ -66,6 +66,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+    runtimeOnly("net.logstash.logback:logstash-logback-encoder:9.0")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("no.novari:fint-model-resource:$fintModelResourceVersion")
