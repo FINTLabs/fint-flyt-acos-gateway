@@ -67,7 +67,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
-    runtimeOnly("net.logstash.logback:logstash-logback-encoder:9.0")
+    // Pinned to 8.x: 9.x pulls in Jackson 3 (tools.jackson), while Spring Boot 3.5 uses Jackson 2
+    runtimeOnly("net.logstash.logback:logstash-logback-encoder:8.1")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("no.novari:fint-model-resource:$fintModelResourceVersion")
