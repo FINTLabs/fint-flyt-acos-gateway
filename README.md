@@ -164,7 +164,7 @@ SPRING_PROFILES_ACTIVE=local-staging \
 ./gradlew bootRun # start the service with local ports and unsecured Kafka
 ```
 
-The local-staging profile expects Kafka on localhost:9092, file-service at http://localhost:8091, and binds HTTP to 
+Start Kafka on localhost:9092 with `docker compose up -d` (add `--profile tools` for Kafdrop on http://localhost:19000). The local-staging profile expects Kafka on localhost:9092, file-service at http://localhost:8091, and binds HTTP to 
 port 8101. Supply OAuth client IDs/secrets through environment variables or a local .envrc. When running locally,
 authenticate requests with a JWT issued by the configured IdP or disable the web-resource-server guard only for isolated
 testing.
