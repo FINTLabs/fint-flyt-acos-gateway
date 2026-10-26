@@ -3,7 +3,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath(platform("com.fasterxml.jackson:jackson-bom:2.22.3"))
+        classpath(platform("com.fasterxml.jackson:jackson-bom:2.22.4"))
         constraints {
             classpath("org.apache.httpcomponents.client5:httpclient5:5.6.5")
             classpath("org.apache.httpcomponents.core5:httpcore5:5.4.4")
@@ -44,13 +44,13 @@ tasks.jar {
 
 extra["httpclient5.version"] = "5.6.3"
 extra["httpcore5.version"] = "5.4.4"
-extra["jackson-bom.version"] = "2.22.3"
+extra["jackson-bom.version"] = "2.22.4"
 extra["log4j2.version"] = "2.26.1"
 extra["tomcat.version"] = "10.1.59"
 
 dependencies {
     constraints {
-        implementation("at.yawk.lz4:lz4-java:1.12.0") {
+        implementation("at.yawk.lz4:lz4-java:1.12.1") {
             because("Fixes CVE-2026-59949 in the kafka-clients transitive dependency")
         }
     }
