@@ -1,10 +1,12 @@
 package no.novari.flyt.acos.instance.gateway
 
 import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.core.io.JsonStringEncoder
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.InvalidMediaTypeException
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.method.HandlerMethod
@@ -32,11 +34,24 @@ class InvalidInstanceRequestLogging : WebMvcConfigurer {
                                 }
                             val errorType = jsonException?.javaClass?.simpleName ?: exception.javaClass.simpleName
                             val targetType = (jsonException as? MismatchedInputException)?.targetType?.simpleName
-                            // Exception messages and stack traces can contain submitted field values.
+                            val mimeType =
+                                if (fieldPath?.matches(Regex("""documents\.\[\d+]\.type""")) == true) {
+                                    generateSequence<Throwable>(exception) { it.cause }
+                                        .filterIsInstance<InvalidMediaTypeException>()
+                                        .firstOrNull()
+                                        ?.mediaType
+                                        ?.let { String(JsonStringEncoder.getInstance().quoteAsString(it.take(256))) }
+                                        ?.let { ", mimeType=\"$it\"" }
+                                        .orEmpty()
+                                } else {
+                                    ""
+                                }
+                            // Only the invalid MIME type is logged; other values may contain sensitive data.
                             log.warn {
                                 "Invalid ACOS request: method=${request.method}, path=${request.requestURI}, " +
                                     "error=$errorType, field=$fieldPath, targetType=$targetType, " +
-                                    "line=${jsonException?.location?.lineNr}, column=${jsonException?.location?.columnNr}"
+                                    "line=${jsonException?.location?.lineNr}, " +
+                                    "column=${jsonException?.location?.columnNr}$mimeType"
                             }
                         }
 
