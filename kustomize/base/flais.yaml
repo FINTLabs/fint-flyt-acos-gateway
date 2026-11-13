@@ -30,6 +30,16 @@ spec:
   env:
     - name: JAVA_TOOL_OPTIONS
       value: '-XX:+ExitOnOutOfMemoryError -XX:MaxRAMPercentage=60'
+    - name: fint.flyt.authorization.sso.client-id
+      valueFrom:
+        secretKeyRef:
+          name: fint-flyt-authorization-oauth2-client
+          key: fint.sso.client-id
+    - name: fint.flyt.authorization.sso.client-secret
+      valueFrom:
+        secretKeyRef:
+          name: fint-flyt-authorization-oauth2-client
+          key: fint.sso.client-secret
   envFrom:
     - secretRef:
         name: fint-flyt-file-oauth2-client
