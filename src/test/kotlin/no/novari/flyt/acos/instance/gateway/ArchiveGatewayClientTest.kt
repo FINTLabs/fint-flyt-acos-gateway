@@ -9,6 +9,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.authentication.TestingAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.registration.ClientRegistration
@@ -26,6 +28,7 @@ import java.time.Instant
 
 class ArchiveGatewayClientTest {
     private val baseUrl = "http://fint-flyt-archive-gateway:8080/beta/afk-no/api/intern-klient"
+    private val principals = mutableListOf<String>()
     private val restClientBuilder =
         ArchiveGatewayClientConfiguration()
             .archiveGatewayRestClient(
@@ -56,6 +59,22 @@ class ArchiveGatewayClientTest {
     }
 
     @Test
+    fun `uses the app as principal, not the caller, so callers share one token`() {
+        server
+            .expect(requestTo("$baseUrl/arkiv/saker?archiveInstanceId=2024%2F123"))
+            .andRespond(withSuccess("{}", MediaType.APPLICATION_JSON))
+
+        try {
+            SecurityContextHolder.getContext().authentication = TestingAuthenticationToken("acos-client", null)
+            client.getCaseWithFilteredJournalposts("2024/123")
+        } finally {
+            SecurityContextHolder.clearContext()
+        }
+
+        assertThat(principals).containsExactly("anonymousUser")
+    }
+
+    @Test
     fun `404 returns null like the Kafka reply did`() {
         server
             .expect(requestTo("$baseUrl/arkiv/saker?archiveInstanceId=2024%2F123"))
@@ -75,6 +94,7 @@ class ArchiveGatewayClientTest {
 
     private fun tokenPerRegistration() =
         OAuth2AuthorizedClientManager { request ->
+            principals += request.principal.name
             OAuth2AuthorizedClient(
                 ClientRegistration
                     .withRegistrationId(request.clientRegistrationId)

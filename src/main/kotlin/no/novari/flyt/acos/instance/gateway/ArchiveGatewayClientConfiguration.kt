@@ -6,6 +6,8 @@ import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder
 import org.springframework.boot.http.client.ClientHttpRequestFactorySettings
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AnonymousAuthenticationToken
+import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.web.client.OAuth2ClientHttpRequestInterceptor
 import org.springframework.web.client.RestClient
@@ -27,6 +29,8 @@ class ArchiveGatewayClientConfiguration {
     ): RestClient {
         val interceptor = OAuth2ClientHttpRequestInterceptor(authorizedClientManager)
         interceptor.setClientRegistrationIdResolver { CLIENT_REGISTRATION_ID }
+        // The default resolves the incoming caller, which would fetch one token per caller.
+        interceptor.setPrincipalResolver { APP_PRINCIPAL }
         return restClientBuilder
             .requestFactory(
                 requestFactoryBuilder.build(
@@ -39,6 +43,12 @@ class ArchiveGatewayClientConfiguration {
 
     private companion object {
         const val CLIENT_REGISTRATION_ID = "archive-gateway"
+        val APP_PRINCIPAL =
+            AnonymousAuthenticationToken(
+                "anonymous",
+                "anonymousUser",
+                AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS"),
+            )
         val CONNECT_TIMEOUT: Duration = Duration.ofSeconds(2)
 
         // archive-gateway looks the case up in FINT. Same limit as the Kafka reply timeout this replaces.
