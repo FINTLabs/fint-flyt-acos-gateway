@@ -29,7 +29,7 @@ spec:
     basePath: path
   env:
     - name: JAVA_TOOL_OPTIONS
-      value: '-XX:+ExitOnOutOfMemoryError -XX:MaxRAMPercentage=60'
+      value: '-XX:+ExitOnOutOfMemoryError -XX:MaxRAMPercentage=60 -XX:-UseBASE64Intrinsics'
     - name: fint.flyt.authorization.sso.client-id
       valueFrom:
         secretKeyRef:
