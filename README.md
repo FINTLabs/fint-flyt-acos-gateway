@@ -132,21 +132,27 @@ handling or Kafka message processing.
 Spring profiles automatically include flyt-kafka, flyt-logging, flyt-web-resource-server, and flyt-file-client. A
 local-staging profile overrides connectivity for local development.
 
-| Property                                                                    | Description                                                                                                      |
-|-----------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
-| fint.application-id                                                         | Shared application identifier that scopes Kafka consumer groups and topic prefixes.                              |
-| novari.flyt.web-resource-server.security.api.external.enabled               | Enables the external API exposure; complement with authorized-source-application-ids to restrict clients.        |
-| novari.flyt.file-service-url                                                | Base URL for Flyt file-service uploads (defaults to the cluster service; overridden locally).                    |
-| spring.security.oauth2.resourceserver.jwt.issuer-uri                        | Identity provider used to validate inbound OAuth2 JWTs (default: https://idp.felleskomponent.no/nidp/oauth/nam). |
-| spring.security.oauth2.client.registration.file-service.*                   | Client credentials for the file-service OAuth client (injected via Kubernetes secrets).                          |
-| spring.kafka.bootstrap-servers & novari.kafka.*                             | Kafka connectivity, default replicas, topic org IDs, and domain context.                                         |
-| novari.flyt.gateway-starter.check-integration-exists                        | Local override that disables integration existence checks (handy for development).                               |
-| server.max-http-request-header-size                                         | Increases request header limits to accommodate large ACOS payloads.                                              |
-| server.servlet.context-path                                                 | Set per overlay so servlet routes, actuator endpoints, and ingress paths stay aligned.                           |
-| logging.level.*                                                             | Enables detailed client/debug logging during development.                                                        |
+| Property                                                              | Description                                                                                                      |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| fint.application-id                                                   | Shared application identifier that scopes Kafka consumer groups and topic prefixes.                              |
+| novari.flyt.web-resource-server.security.api.external.enabled         | Enables the external API exposure; complement with authorized-source-application-ids to restrict clients.        |
+| novari.flyt.file-service-url                                          | Base URL for Flyt file-service uploads (defaults to the cluster service; overridden locally).                    |
+| spring.security.oauth2.resourceserver.jwt.issuer-uri                  | Identity provider used to validate inbound OAuth2 JWTs (default: https://idp.felleskomponent.no/nidp/oauth/nam). |
+| spring.security.oauth2.client.registration.file-service.*             | Client credentials for the file-service OAuth client (injected via Kubernetes secrets).                          |
+| spring.security.oauth2.client.registration.{intgr-conf-service,...}.* | Internal FLYT calls with the shared `fint-flyt-authorization-oauth2-client`, see below.                          |
+| novari.flyt.archive-gateway-url                                       | Base URL for archive-gateway (defaults to the cluster service).                                                  |
+| spring.kafka.bootstrap-servers & novari.kafka.*                       | Kafka connectivity, default replicas, topic org IDs, and domain context.                                         |
+| novari.flyt.gateway-starter.check-integration-exists                  | Local override that disables integration existence checks (handy for development).                               |
+| server.max-http-request-header-size                                   | Increases request header limits to accommodate large ACOS payloads.                                              |
+| server.servlet.context-path                                           | Set per overlay so servlet routes, actuator endpoints, and ingress paths stay aligned.                           |
+| logging.level.*                                                       | Enables detailed client/debug logging during development.                                                        |
 
 Secrets referenced by manifests must supply OAuth client IDs/secrets (fint.flyt.acos.sso.*, fint.sso.*) and any archive
 credentials required by downstream services.
+
+The registrations `intgr-conf-service`, `history-service`, `authorization-service` and `archive-gateway` all use the
+shared `fint-flyt-authorization-oauth2-client`, mapped to `fint.flyt.authorization.sso.*` with `secretKeyRef`. Cases
+are fetched from `/api/intern-klient/arkiv/saker` in archive-gateway.
 
 ## Running Locally
 

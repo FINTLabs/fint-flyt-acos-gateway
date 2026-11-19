@@ -4,3 +4,4 @@ resources:
   - flais.yaml
   - acos-oauth2-client.yaml
   - oauth2-file-client.yaml
+  - oauth2-authorization-client.yaml
