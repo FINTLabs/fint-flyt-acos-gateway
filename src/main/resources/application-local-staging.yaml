@@ -9,8 +9,8 @@ novari:
       check-integration-exists: false
 
   kafka:
-    default-replicas: 1
     topic:
+      default-replicas: 1
       org-id: novari-no
 
 spring:

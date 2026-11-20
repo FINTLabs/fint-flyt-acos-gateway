@@ -3,8 +3,6 @@ package no.novari.flyt.acos.instance.gateway
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
-import com.fasterxml.jackson.databind.exc.MismatchedInputException
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.novari.flyt.acos.discovery.gateway.AcosIntegrationMetadataController
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -27,6 +25,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestController
+import tools.jackson.databind.exc.MismatchedInputException
+import tools.jackson.module.kotlin.jacksonObjectMapper
 
 class InvalidInstanceRequestAdviceTest {
     private val logger = LoggerFactory.getLogger(InvalidInstanceRequestAdvice::class.java) as Logger
@@ -80,7 +80,7 @@ class InvalidInstanceRequestAdviceTest {
     fun `logs malformed JSON location without source content`() {
         val message = postInvalidInstance("""{"metadata": private-value}""")
 
-        assertThat(message).contains("error=JsonParseException", "line=1", "column=")
+        assertThat(message).contains("error=StreamReadException", "line=1", "column=")
         assertThat(message).doesNotContain("private-value")
         assertThat(responseMessage()).contains("Invalid JSON at line 1, column", "Check the JSON syntax.")
         assertThat(response.contentAsString).doesNotContain("private-value")
@@ -167,11 +167,11 @@ class InvalidInstanceRequestAdviceTest {
         assertThat(message).doesNotContain("private-name", "private-document", "private-instance", "private-form")
         assertThat(response.contentType).isEqualTo("application/json;charset=UTF-8")
         val body = jacksonObjectMapper().readTree(response.contentAsByteArray)
-        assertThat(body["timestamp"].asText()).isNotBlank()
+        assertThat(body["timestamp"].asString()).isNotBlank()
         assertThat(body["status"].asInt()).isEqualTo(400)
-        assertThat(body["error"].asText()).isEqualTo("Bad Request")
-        assertThat(body["path"].asText()).isEqualTo("/afk-no/api/acos/instances")
-        assertThat(body["message"].asText()).isEqualTo(
+        assertThat(body["error"].asString()).isEqualTo("Bad Request")
+        assertThat(body["path"].asString()).isEqualTo("/afk-no/api/acos/instances")
+        assertThat(body["message"].asString()).isEqualTo(
             "Invalid MIME type \"m4a\" in field documents[3].type. " +
                 "Expected format type/subtype, for example audio/mp4 or application/pdf.",
         )
@@ -188,7 +188,7 @@ class InvalidInstanceRequestAdviceTest {
         assertThat(message).doesNotContain("\r", "\n", "\t", "x".repeat(256))
         val loggedMimeType = message.substringAfter("mimeType=")
         assertThat(jacksonObjectMapper().readValue(loggedMimeType, String::class.java)).isEqualTo(mimeType.take(256))
-        val responseMessage = jacksonObjectMapper().readTree(response.contentAsByteArray)["message"].asText()
+        val responseMessage = jacksonObjectMapper().readTree(response.contentAsByteArray)["message"].asString()
         assertThat(responseMessage).contains(loggedMimeType).doesNotContain("\r", "\n", "\t", "x".repeat(256))
     }
 
@@ -284,7 +284,8 @@ class InvalidInstanceRequestAdviceTest {
         )
     }
 
-    private fun responseMessage(): String = jacksonObjectMapper().readTree(response.contentAsString)["message"].asText()
+    private fun responseMessage(): String =
+        jacksonObjectMapper().readTree(response.contentAsString)["message"].asString()
 
     private fun postInvalidInstance(body: String): String {
         response =

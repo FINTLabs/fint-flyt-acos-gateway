@@ -2,24 +2,20 @@ package no.novari.flyt.acos.instance.gateway
 
 import no.novari.fint.model.resource.arkiv.noark.SakResource
 import no.novari.flyt.gateway.instance.HistoryClient
-import no.novari.flyt.webresourceserver.security.client.sourceapplication.SourceApplicationAuthorizationService
-import org.springframework.security.core.Authentication
+import no.novari.flyt.security.FlytSecurityProperties
 import org.springframework.stereotype.Service
 
 @Service
 class ArchiveCaseService(
     private val historyClient: HistoryClient,
     private val archiveGatewayClient: ArchiveGatewayClient,
-    private val sourceApplicationAuthorizationService: SourceApplicationAuthorizationService,
+    private val securityProperties: FlytSecurityProperties,
 ) {
     fun getCase(archiveCaseId: String): SakResource? =
         archiveGatewayClient.getCaseWithFilteredJournalposts(archiveCaseId)
 
-    fun getCase(
-        authentication: Authentication,
-        sourceApplicationInstanceId: String,
-    ): SakResource? {
-        val sourceApplicationId = sourceApplicationAuthorizationService.getSourceApplicationId(authentication)
+    fun getCaseForInstance(sourceApplicationInstanceId: String): SakResource? {
+        val sourceApplicationId = securityProperties.external.sourceApplicationId!!
         val archiveCaseId =
             historyClient.getArchiveInstanceId(
                 sourceApplicationId = sourceApplicationId,

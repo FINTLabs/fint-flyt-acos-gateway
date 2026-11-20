@@ -1,126 +1,94 @@
 package no.novari.flyt.acos.instance.gateway.codelist
 
-import no.novari.cache.FintCache
-import no.novari.fint.model.resource.FintLinks
 import no.novari.fint.model.resource.administrasjon.personal.PersonalressursResource
 import no.novari.fint.model.resource.arkiv.kodeverk.SaksstatusResource
 import no.novari.fint.model.resource.arkiv.noark.AdministrativEnhetResource
 import no.novari.fint.model.resource.arkiv.noark.ArkivressursResource
 import no.novari.fint.model.resource.felles.PersonResource
 import no.novari.flyt.acos.instance.gateway.codelist.links.ResourceLinkUtil
-import no.novari.kafka.consuming.ErrorHandlerConfiguration
-import no.novari.kafka.consuming.ErrorHandlerFactory
-import no.novari.kafka.consuming.ListenerConfiguration
-import no.novari.kafka.consuming.ParameterizedListenerContainerFactoryService
-import no.novari.kafka.topic.name.EntityTopicNameParameters
-import no.novari.kafka.topic.name.TopicNamePrefixParameters
-import org.springframework.context.annotation.Bean
+import no.novari.flyt.cache.FlytCache
+import org.apache.kafka.common.TopicPartition
 import org.springframework.context.annotation.Configuration
-import org.springframework.kafka.listener.ConcurrentMessageListenerContainer
+import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.kafka.listener.AbstractConsumerSeekAware
+import org.springframework.kafka.listener.ConsumerSeekAware
+import org.springframework.kafka.support.KafkaHeaders
+import org.springframework.messaging.handler.annotation.Header
+import org.springframework.messaging.handler.annotation.Payload
 
 @Configuration
 class ResourceEntityConsumersConfiguration(
-    private val listenerFactoryService: ParameterizedListenerContainerFactoryService,
-    private val errorHandlerFactory: ErrorHandlerFactory,
-) {
-    private fun <T : FintLinks> createCacheConsumer(
-        resourceName: String,
-        resourceClass: Class<T>,
-        cache: FintCache<String, T>,
-    ): ConcurrentMessageListenerContainer<String, T> {
-        val listenerConfiguration =
-            ListenerConfiguration
-                .stepBuilder()
-                .groupIdApplicationDefault()
-                .maxPollRecordsKafkaDefault()
-                .maxPollIntervalKafkaDefault()
-                .seekToBeginningOnAssignment()
-                .build()
-
-        val errorHandler =
-            errorHandlerFactory.createErrorHandler(
-                ErrorHandlerConfiguration
-                    .stepBuilder<T>()
-                    .noRetries()
-                    .skipFailedRecords()
-                    .build(),
-            )
-
-        return listenerFactoryService
-            .createRecordListenerContainerFactory(
-                resourceClass,
-                { record ->
-                    val value = record.value()
-                    cache.put(ResourceLinkUtil.getSelfLinks(value), value)
-                },
-                listenerConfiguration,
-                errorHandler,
-            ).createContainer(
-                EntityTopicNameParameters
-                    .builder()
-                    .topicNamePrefixParameters(
-                        TopicNamePrefixParameters
-                            .stepBuilder()
-                            .orgIdApplicationDefault()
-                            .domainContextApplicationDefault()
-                            .build(),
-                    ).resourceName(resourceName)
-                    .build(),
-            )
+    private val administrativEnhetResourceCache: FlytCache<String, AdministrativEnhetResource>,
+    private val arkivressursResourceCache: FlytCache<String, ArkivressursResource>,
+    private val saksstatusResourceCache: FlytCache<String, SaksstatusResource>,
+    private val personalressursResourceCache: FlytCache<String, PersonalressursResource>,
+    private val personResourceCache: FlytCache<String, PersonResource>,
+) : AbstractConsumerSeekAware() {
+    @KafkaListener(topics = ["#{@administrativEnhetResourceTopic.name}"])
+    fun onAdministrativEnhetResource(
+        @Payload(required = false) resource: AdministrativEnhetResource?,
+        @Header(KafkaHeaders.RECEIVED_KEY) key: String,
+    ) {
+        if (resource == null) {
+            administrativEnhetResourceCache.remove(key)
+        } else {
+            administrativEnhetResourceCache.put(ResourceLinkUtil.getSelfLinks(resource), resource)
+        }
     }
 
-    @Bean
-    fun administrativEnhetResourceEntityConsumer(
-        administrativEnhetResourceCache: FintCache<String, AdministrativEnhetResource>,
-    ): ConcurrentMessageListenerContainer<String, AdministrativEnhetResource> {
-        return createCacheConsumer(
-            resourceName = "arkiv-noark-administrativenhet",
-            resourceClass = AdministrativEnhetResource::class.java,
-            cache = administrativEnhetResourceCache,
-        )
+    @KafkaListener(topics = ["#{@arkivressursResourceTopic.name}"])
+    fun onArkivressursResource(
+        @Payload(required = false) resource: ArkivressursResource?,
+        @Header(KafkaHeaders.RECEIVED_KEY) key: String,
+    ) {
+        if (resource == null) {
+            arkivressursResourceCache.remove(key)
+        } else {
+            arkivressursResourceCache.put(ResourceLinkUtil.getSelfLinks(resource), resource)
+        }
     }
 
-    @Bean
-    fun arkivressursResourceEntityConsumer(
-        arkivressursResourceCache: FintCache<String, ArkivressursResource>,
-    ): ConcurrentMessageListenerContainer<String, ArkivressursResource> {
-        return createCacheConsumer(
-            resourceName = "arkiv-noark-arkivressurs",
-            resourceClass = ArkivressursResource::class.java,
-            cache = arkivressursResourceCache,
-        )
+    @KafkaListener(topics = ["#{@saksstatusResourceTopic.name}"])
+    fun onSaksstatusResource(
+        @Payload(required = false) resource: SaksstatusResource?,
+        @Header(KafkaHeaders.RECEIVED_KEY) key: String,
+    ) {
+        if (resource == null) {
+            saksstatusResourceCache.remove(key)
+        } else {
+            saksstatusResourceCache.put(ResourceLinkUtil.getSelfLinks(resource), resource)
+        }
     }
 
-    @Bean
-    fun saksstatusResourceEntityConsumer(
-        saksstatusResourceCache: FintCache<String, SaksstatusResource>,
-    ): ConcurrentMessageListenerContainer<String, SaksstatusResource> {
-        return createCacheConsumer(
-            resourceName = "arkiv-kodeverk-saksstatus",
-            resourceClass = SaksstatusResource::class.java,
-            cache = saksstatusResourceCache,
-        )
+    @KafkaListener(topics = ["#{@personalressursResourceTopic.name}"])
+    fun onPersonalressursResource(
+        @Payload(required = false) resource: PersonalressursResource?,
+        @Header(KafkaHeaders.RECEIVED_KEY) key: String,
+    ) {
+        if (resource == null) {
+            personalressursResourceCache.remove(key)
+        } else {
+            personalressursResourceCache.put(ResourceLinkUtil.getSelfLinks(resource), resource)
+        }
     }
 
-    @Bean
-    fun personalressursResourceEntityConsumer(
-        personalressursResourceCache: FintCache<String, PersonalressursResource>,
-    ): ConcurrentMessageListenerContainer<String, PersonalressursResource> {
-        return createCacheConsumer(
-            resourceName = "administrasjon-personal-personalressurs",
-            resourceClass = PersonalressursResource::class.java,
-            cache = personalressursResourceCache,
-        )
+    @KafkaListener(topics = ["#{@personResourceTopic.name}"])
+    fun onPersonResource(
+        @Payload(required = false) resource: PersonResource?,
+        @Header(KafkaHeaders.RECEIVED_KEY) key: String,
+    ) {
+        if (resource == null) {
+            personResourceCache.remove(key)
+        } else {
+            personResourceCache.put(ResourceLinkUtil.getSelfLinks(resource), resource)
+        }
     }
 
-    @Bean
-    fun personResourceEntityConsumer(
-        personResourceCache: FintCache<String, PersonResource>,
-    ): ConcurrentMessageListenerContainer<String, PersonResource> {
-        return createCacheConsumer(
-            resourceName = "administrasjon-personal-person",
-            resourceClass = PersonResource::class.java,
-            cache = personResourceCache,
-        )
+    override fun onPartitionsAssigned(
+        assignments: Map<TopicPartition, Long>,
+        callback: ConsumerSeekAware.ConsumerSeekCallback,
+    ) {
+        super.onPartitionsAssigned(assignments, callback)
+        callback.seekToBeginning(assignments.keys)
     }
 }

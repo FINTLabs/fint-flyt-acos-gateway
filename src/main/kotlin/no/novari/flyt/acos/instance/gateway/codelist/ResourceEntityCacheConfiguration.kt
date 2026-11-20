@@ -1,50 +1,65 @@
 package no.novari.flyt.acos.instance.gateway.codelist
 
-import no.novari.cache.FintCache
-import no.novari.cache.FintCacheManager
 import no.novari.fint.model.resource.administrasjon.personal.PersonalressursResource
 import no.novari.fint.model.resource.arkiv.kodeverk.SaksstatusResource
 import no.novari.fint.model.resource.arkiv.noark.AdministrativEnhetResource
 import no.novari.fint.model.resource.arkiv.noark.ArkivressursResource
 import no.novari.fint.model.resource.felles.PersonResource
+import no.novari.flyt.cache.FlytCache
+import no.novari.kafka.starter.topic.KafkaTopics
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.kafka.listener.CommonErrorHandler
+import org.springframework.kafka.listener.DefaultErrorHandler
+import org.springframework.util.backoff.FixedBackOff
 import java.util.Locale
 
 @Configuration
-class ResourceEntityCacheConfiguration(
-    private val fintCacheManager: FintCacheManager,
-) {
+class ResourceEntityCacheConfiguration {
     @Bean
-    fun administrativEnhetResourceCache(): FintCache<String, AdministrativEnhetResource> {
+    fun kafkaErrorHandler(): CommonErrorHandler = DefaultErrorHandler(FixedBackOff(0, 0))
+
+    @Bean
+    fun administrativEnhetResourceTopic(topics: KafkaTopics) = topics.entity("arkiv-noark-administrativenhet")
+
+    @Bean
+    fun arkivressursResourceTopic(topics: KafkaTopics) = topics.entity("arkiv-noark-arkivressurs")
+
+    @Bean
+    fun saksstatusResourceTopic(topics: KafkaTopics) = topics.entity("arkiv-kodeverk-saksstatus")
+
+    @Bean
+    fun personalressursResourceTopic(topics: KafkaTopics) = topics.entity("administrasjon-personal-personalressurs")
+
+    @Bean
+    fun personResourceTopic(topics: KafkaTopics) = topics.entity("administrasjon-personal-person")
+
+    @Bean
+    fun administrativEnhetResourceCache(): FlytCache<String, AdministrativEnhetResource> {
         return createCache(AdministrativEnhetResource::class.java)
     }
 
     @Bean
-    fun arkivressursResourceCache(): FintCache<String, ArkivressursResource> {
+    fun arkivressursResourceCache(): FlytCache<String, ArkivressursResource> {
         return createCache(ArkivressursResource::class.java)
     }
 
     @Bean
-    fun saksstatusResourceCache(): FintCache<String, SaksstatusResource> {
+    fun saksstatusResourceCache(): FlytCache<String, SaksstatusResource> {
         return createCache(SaksstatusResource::class.java)
     }
 
     @Bean
-    fun personalressursResourceCache(): FintCache<String, PersonalressursResource> {
+    fun personalressursResourceCache(): FlytCache<String, PersonalressursResource> {
         return createCache(PersonalressursResource::class.java)
     }
 
     @Bean
-    fun personResourceCache(): FintCache<String, PersonResource> {
+    fun personResourceCache(): FlytCache<String, PersonResource> {
         return createCache(PersonResource::class.java)
     }
 
-    private fun <V> createCache(resourceClass: Class<V>): FintCache<String, V> {
-        return fintCacheManager.createCache(
-            resourceClass.name.lowercase(Locale.ROOT),
-            String::class.java,
-            resourceClass,
-        )
+    private fun <V : Any> createCache(resourceClass: Class<V>): FlytCache<String, V> {
+        return FlytCache(resourceClass.name.lowercase(Locale.ROOT))
     }
 }

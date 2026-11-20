@@ -3,7 +3,6 @@ fint:
 
 logging:
   level:
-    no.novari.cache.ehcache.FintEhCacheEventLogger: WARN
     reactor.netty.http.client: debug
 
 server:
@@ -16,7 +15,7 @@ spring:
     include:
       - flyt-kafka
       - flyt-logging
-      - flyt-web-resource-server
+      - flyt-security
       - flyt-file-client
       - flyt-authorization-client
   output:

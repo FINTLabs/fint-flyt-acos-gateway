@@ -5,10 +5,9 @@ import no.novari.flyt.acos.instance.gateway.caseinfo.CaseInfoMappingService
 import no.novari.flyt.acos.instance.gateway.model.acos.AcosInstance
 import no.novari.flyt.acos.instance.gateway.model.caseinfo.CaseInfo
 import no.novari.flyt.gateway.instance.InstanceProcessor
-import no.novari.flyt.webresourceserver.UrlPaths.EXTERNAL_API
+import no.novari.flyt.security.UrlPaths.EXTERNAL_API
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,12 +25,11 @@ class AcosInstanceController(
 ) {
     @GetMapping("{sourceApplicationInstanceId}/case-info")
     fun getInstanceCaseInfo(
-        authentication: Authentication,
         @PathVariable sourceApplicationInstanceId: String,
     ): ResponseEntity<CaseInfo> {
         val caseInfo =
             archiveCaseService
-                .getCase(authentication, sourceApplicationInstanceId)
+                .getCaseForInstance(sourceApplicationInstanceId)
                 ?.let { caseResource ->
                     caseInfoMappingService.toCaseInfo(sourceApplicationInstanceId, caseResource)
                 }
@@ -46,8 +44,7 @@ class AcosInstanceController(
     @PostMapping
     fun postInstance(
         @Valid @RequestBody acosInstance: AcosInstance,
-        authentication: Authentication,
     ): ResponseEntity<Void> {
-        return instanceProcessor.processInstance(authentication, acosInstance)
+        return instanceProcessor.processInstance(acosInstance)
     }
 }
