@@ -12,7 +12,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.Authentication
 
 @ExtendWith(MockitoExtension::class)
 class AcosIntegrationMetadataControllerTest {
@@ -24,9 +23,6 @@ class AcosIntegrationMetadataControllerTest {
 
     @Mock
     private lateinit var integrationMetadataProcessor: IntegrationMetadataProcessor
-
-    @Mock
-    private lateinit var authentication: Authentication
 
     @Test
     fun postIntegrationMetadataShouldDelegateToIntegrationMetadataProcessor() {
@@ -42,7 +38,6 @@ class AcosIntegrationMetadataControllerTest {
 
         whenever(
             integrationMetadataProcessor.processIntegrationMetadata(
-                authentication = authentication,
                 incomingMetadata = acosFormDefinition,
                 integrationMetadataMapper = acosFormDefinitionMapper,
                 integrationMetadataValidator = acosFormDefinitionValidator,
@@ -56,11 +51,10 @@ class AcosIntegrationMetadataControllerTest {
                 integrationMetadataProcessor = integrationMetadataProcessor,
             )
 
-        val responseEntity = controller.postIntegrationMetadata(acosFormDefinition, authentication)
+        val responseEntity = controller.postIntegrationMetadata(acosFormDefinition)
 
         assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.ACCEPTED)
         verify(integrationMetadataProcessor).processIntegrationMetadata(
-            authentication = authentication,
             incomingMetadata = acosFormDefinition,
             integrationMetadataMapper = acosFormDefinitionMapper,
             integrationMetadataValidator = acosFormDefinitionValidator,

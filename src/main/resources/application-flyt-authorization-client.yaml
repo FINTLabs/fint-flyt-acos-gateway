@@ -13,11 +13,6 @@ spring:
             provider: fint-idp
             client-id: ${fint.flyt.authorization.sso.client-id}
             client-secret: ${fint.flyt.authorization.sso.client-secret}
-          authorization-service:
-            authorization-grant-type: client_credentials
-            provider: fint-idp
-            client-id: ${fint.flyt.authorization.sso.client-id}
-            client-secret: ${fint.flyt.authorization.sso.client-secret}
           archive-gateway:
             authorization-grant-type: client_credentials
             provider: fint-idp

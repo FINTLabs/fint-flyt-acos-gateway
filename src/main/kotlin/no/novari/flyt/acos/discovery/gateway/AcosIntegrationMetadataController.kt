@@ -2,9 +2,8 @@ package no.novari.flyt.acos.discovery.gateway
 
 import no.novari.flyt.acos.discovery.gateway.model.acos.AcosFormDefinition
 import no.novari.flyt.gateway.metadata.IntegrationMetadataProcessor
-import no.novari.flyt.webresourceserver.UrlPaths.EXTERNAL_API
+import no.novari.flyt.security.UrlPaths.EXTERNAL_API
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -20,10 +19,8 @@ class AcosIntegrationMetadataController(
     @PostMapping
     fun postIntegrationMetadata(
         @RequestBody acosFormDefinition: AcosFormDefinition,
-        authentication: Authentication,
     ): ResponseEntity<Void> {
         return integrationMetadataProcessor.processIntegrationMetadata(
-            authentication = authentication,
             incomingMetadata = acosFormDefinition,
             integrationMetadataMapper = acosFormDefinitionMapper,
             integrationMetadataValidator = acosFormDefinitionValidator,

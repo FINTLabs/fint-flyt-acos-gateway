@@ -1,0 +1,6 @@
+novari:
+  flyt:
+    security:
+      external:
+        source-application-id: 1
+        paths: /api/acos/**

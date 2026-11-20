@@ -3,7 +3,7 @@ package no.novari.flyt.acos.instance.gateway
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder
-import org.springframework.boot.http.client.ClientHttpRequestFactorySettings
+import org.springframework.boot.http.client.HttpClientSettings
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AnonymousAuthenticationToken
@@ -34,7 +34,7 @@ class ArchiveGatewayClientConfiguration {
         return restClientBuilder
             .requestFactory(
                 requestFactoryBuilder.build(
-                    ClientHttpRequestFactorySettings.defaults().withTimeouts(CONNECT_TIMEOUT, READ_TIMEOUT),
+                    HttpClientSettings.defaults().withTimeouts(CONNECT_TIMEOUT, READ_TIMEOUT),
                 ),
             ).requestInterceptor(interceptor)
             .baseUrl("${baseUrl.trimEnd('/')}/api/intern-klient")

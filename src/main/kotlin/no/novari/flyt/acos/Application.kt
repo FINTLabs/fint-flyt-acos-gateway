@@ -1,4 +1,4 @@
-package no.novari
+package no.novari.flyt.acos
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

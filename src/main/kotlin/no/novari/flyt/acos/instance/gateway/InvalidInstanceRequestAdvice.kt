@@ -1,11 +1,5 @@
 package no.novari.flyt.acos.instance.gateway
 
-import com.fasterxml.jackson.core.JsonParseException
-import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.exc.InvalidNullException
-import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.core.Ordered
@@ -19,6 +13,12 @@ import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import tools.jackson.core.JacksonException
+import tools.jackson.core.exc.StreamReadException
+import tools.jackson.databind.DatabindException
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.databind.exc.InvalidNullException
+import tools.jackson.databind.exc.MismatchedInputException
 import java.time.OffsetDateTime
 
 private val log = KotlinLogging.logger {}
@@ -35,10 +35,10 @@ class InvalidInstanceRequestAdvice(
         request: HttpServletRequest,
     ): ResponseEntity<Map<String, Any>> {
         val causes = generateSequence<Throwable>(exception) { it.cause }.toList()
-        val jsonException = causes.filterIsInstance<JsonProcessingException>().firstOrNull()
+        val jsonException = causes.filterIsInstance<JacksonException>().firstOrNull()
         val fieldPath =
-            (jsonException as? JsonMappingException)?.path?.joinToString(".") {
-                it.fieldName ?: "[${it.index}]"
+            (jsonException as? DatabindException)?.path?.joinToString(".") {
+                it.propertyName ?: "[${it.index}]"
             }
         val errorType = jsonException?.javaClass?.simpleName ?: exception.javaClass.simpleName
         val targetType = (jsonException as? MismatchedInputException)?.targetType?.simpleName
@@ -71,7 +71,7 @@ class InvalidInstanceRequestAdvice(
                     "Required field $field is missing or null."
                 }
 
-                jsonException is JsonParseException -> {
+                jsonException is StreamReadException -> {
                     "Invalid JSON at line ${jsonException.location?.lineNr}, " +
                         "column ${jsonException.location?.columnNr}. Check the JSON syntax."
                 }
@@ -115,7 +115,7 @@ class InvalidInstanceRequestAdvice(
                     "Incorrect data type in field $field. Expected $expected."
                 }
 
-                jsonException is JsonMappingException -> {
+                jsonException is DatabindException -> {
                     "Invalid value in field $field."
                 }
 
