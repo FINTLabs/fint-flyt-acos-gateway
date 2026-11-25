@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
 buildscript {
     repositories {
         gradlePluginPortal()
@@ -12,12 +14,11 @@ buildscript {
 }
 
 plugins {
-    id("org.springframework.boot") version "4.1.2"
-    id("io.spring.dependency-management") version "1.1.7"
+    id("org.springframework.boot") version "4.2.0"
     id("io.github.ben-manes.versions") version "0.67.0"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
-    kotlin("jvm") version "2.4.10"
-    kotlin("plugin.spring") version "2.4.10"
+    kotlin("jvm") version "2.4.21"
+    kotlin("plugin.spring") version "2.4.21"
 }
 
 group = "no.novari"
@@ -45,13 +46,12 @@ tasks.jar {
     isEnabled = false
 }
 
-extra["kotlin.version"] = "2.4.10"
-
 dependencyLocking {
     lockAllConfigurations()
 }
 
 dependencies {
+    implementation(platform(SpringBootPlugin.BOM_COORDINATES))
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-restclient")
@@ -68,8 +68,8 @@ dependencies {
     implementation("no.novari:fint-arkiv-resource-model-java:$fintResourceModelVersion")
     implementation("no.novari:fint-administrasjon-resource-model-java:$fintResourceModelVersion")
 
-    implementation("no.novari:flyt-gateway-starter:6.0.0-rc-2")
-    implementation("no.novari:flyt-cache:4.0.0-rc-3")
+    implementation("no.novari:flyt-gateway-starter:6.0.0-rc-3")
+    implementation("no.novari:flyt-cache:4.0.0-rc-4")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
