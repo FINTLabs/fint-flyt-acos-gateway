@@ -2,7 +2,7 @@
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
 # To regenerate this file, run: ./gradlew :dependencies --write-locks
-at.yawk.lz4:lz4-java:1.14.0=productionRuntimeClasspath,runtimeClasspath,testRuntimeClasspath
+at.yawk.lz4:lz4-java:1.14.1=productionRuntimeClasspath,runtimeClasspath,testRuntimeClasspath
 biz.aQute.bnd:biz.aQute.bnd.annotation:7.1.0=compileClasspath,testCompileClasspath
 ch.qos.logback:logback-classic:1.3.16=ktlint
 ch.qos.logback:logback-classic:1.6.6=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
@@ -80,10 +80,10 @@ no.novari:fint-felles-resource-model-java:4.1.0=compileClasspath,productionRunti
 no.novari:fint-model-core:1.0.0=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 no.novari:fint-model-resource:1.0.1=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 no.novari:flyt-cache:4.0.0-rc-4=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-no.novari:flyt-gateway-starter:6.0.0-rc-3=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-no.novari:flyt-kafka:8.0.0-rc-5=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+no.novari:flyt-gateway-starter:6.0.0-rc-4=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+no.novari:flyt-kafka:8.0.0-rc-6=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 no.novari:flyt-security-starter:1.0.0-rc-2=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-no.novari:kafka-starter:1.0.0-rc-4=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+no.novari:kafka-starter:1.0.0-rc-5=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.apache.httpcomponents.client5:httpclient5:5.6.5=productionRuntimeClasspath,runtimeClasspath,testRuntimeClasspath
 org.apache.httpcomponents.core5:httpcore5-h2:5.4.4=productionRuntimeClasspath,runtimeClasspath,testRuntimeClasspath
 org.apache.httpcomponents.core5:httpcore5:5.4.4=productionRuntimeClasspath,runtimeClasspath,testRuntimeClasspath
