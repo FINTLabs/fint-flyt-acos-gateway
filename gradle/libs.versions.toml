@@ -1,0 +1,33 @@
+[versions]
+spring-boot = "4.2.0"
+kotlin = "2.4.21"
+flyt-gateway-starter = "6.0.0-rc-6"
+flyt-cache = "4.0.0-rc-5"
+fint-model-resource = "1.0.1"
+fint-resource-model = "4.1.0"
+kotlin-logging = "8.0.7"
+logstash-logback-encoder = "9.0"
+mockito-kotlin = "6.4.0"
+ktlint-gradle = "14.2.0"
+ktlint-cli = "1.8.0"
+logback = "1.6.8"
+commons-lang3 = "3.22.0"
+
+[libraries]
+spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
+flyt-gateway-starter = { module = "no.novari:flyt-gateway-starter", version.ref = "flyt-gateway-starter" }
+flyt-cache = { module = "no.novari:flyt-cache", version.ref = "flyt-cache" }
+fint-model-resource = { module = "no.novari:fint-model-resource", version.ref = "fint-model-resource" }
+fint-arkiv-resource-model = { module = "no.novari:fint-arkiv-resource-model-java", version.ref = "fint-resource-model" }
+fint-administrasjon-resource-model = { module = "no.novari:fint-administrasjon-resource-model-java", version.ref = "fint-resource-model" }
+kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
+logstash-logback-encoder = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "logstash-logback-encoder" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
+logback-core = { module = "ch.qos.logback:logback-core", version.ref = "logback" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }

@@ -1,5 +1,7 @@
 novari:
   kafka:
+    consumer:
+      group-id-check: FAIL
     topic:
       domain-context: flyt
     application-id: ${fint.application-id}

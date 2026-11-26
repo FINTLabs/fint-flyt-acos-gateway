@@ -28,6 +28,11 @@ spec:
     enabled: true
     basePath: path
   env:
+    - name: fint.flyt.acos.sso.client-id
+      valueFrom:
+        secretKeyRef:
+          name: fint-flyt-acos-oauth2-client
+          key: fint.flyt.acos.sso.client-id
     - name: JAVA_TOOL_OPTIONS
       value: '-XX:+ExitOnOutOfMemoryError -XX:MaxRAMPercentage=60 -XX:-UseBASE64Intrinsics'
     - name: fint.flyt.authorization.sso.client-id
