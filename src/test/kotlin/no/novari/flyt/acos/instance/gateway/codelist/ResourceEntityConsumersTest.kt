@@ -33,6 +33,30 @@ class ResourceEntityConsumersTest {
     }
 
     @Test
+    fun `a new version drops the self links it no longer has, and a tombstone removes the rest`() {
+        val key = "https://fint.test/status/3"
+        val old =
+            SaksstatusResource().apply {
+                addSelf(Link.with(key))
+                addSelf(Link.with("https://fint.test/status/old"))
+            }
+        val new =
+            SaksstatusResource().apply {
+                addSelf(Link.with(key))
+                addSelf(Link.with("https://fint.test/status/new"))
+            }
+
+        listeners.onSaksstatusResource(old, key)
+        listeners.onSaksstatusResource(new, key)
+        assertThat(cache.getOrNull("https://fint.test/status/old")).isNull()
+        assertThat(cache.get("https://fint.test/status/new")).isSameAs(new)
+
+        listeners.onSaksstatusResource(null, key)
+        assertThat(cache.getOrNull(key)).isNull()
+        assertThat(cache.getOrNull("https://fint.test/status/new")).isNull()
+    }
+
+    @Test
     fun `record without a key is cached, and a tombstone without a key is ignored`() {
         val resource = SaksstatusResource().apply { addSelf(Link.with("https://fint.test/status/2")) }
         listeners.onSaksstatusResource(resource, null)

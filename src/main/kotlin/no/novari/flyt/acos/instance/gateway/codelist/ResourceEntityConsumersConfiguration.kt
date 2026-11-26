@@ -56,15 +56,20 @@ class ResourceEntityConsumersConfiguration(
     ) = personResourceCache.update(key, resource)
 
     /**
-     * A resource is cached under every self link. A tombstone removes all of them, found through the cached resource
-     * under the record key (archive-gateway keys records with the first self link).
+     * A resource is cached under every self link and its record key (archive-gateway keys records with the first self
+     * link). A new version and a tombstone find the previous version under the key, so no stale link is left behind.
      */
     private fun <R : FintLinks> FlytCache<String, R>.update(
         key: String?,
         resource: R?,
     ) {
         if (resource != null) {
-            put(ResourceLinkUtil.getSelfLinks(resource), resource)
+            val links = ResourceLinkUtil.getSelfLinks(resource)
+            if (key != null) {
+                // Drops links the previous version had and this one has not, so a later tombstone leaves none behind.
+                getOrNull(key)?.let { previous -> remove(ResourceLinkUtil.getSelfLinks(previous) - links.toSet()) }
+            }
+            put(listOfNotNull(key) + links, resource)
         } else if (key != null) {
             getOrNull(key)?.let { remove(ResourceLinkUtil.getSelfLinks(it)) }
             remove(key)
