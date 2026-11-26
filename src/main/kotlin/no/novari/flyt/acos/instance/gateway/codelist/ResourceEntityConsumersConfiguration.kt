@@ -1,5 +1,6 @@
 package no.novari.flyt.acos.instance.gateway.codelist
 
+import no.novari.fint.model.resource.FintLinks
 import no.novari.fint.model.resource.administrasjon.personal.PersonalressursResource
 import no.novari.fint.model.resource.arkiv.kodeverk.SaksstatusResource
 import no.novari.fint.model.resource.arkiv.noark.AdministrativEnhetResource
@@ -27,60 +28,46 @@ class ResourceEntityConsumersConfiguration(
     @KafkaListener(topics = ["#{@administrativEnhetResourceTopic.name}"])
     fun onAdministrativEnhetResource(
         @Payload(required = false) resource: AdministrativEnhetResource?,
-        @Header(KafkaHeaders.RECEIVED_KEY) key: String,
-    ) {
-        if (resource == null) {
-            administrativEnhetResourceCache.remove(key)
-        } else {
-            administrativEnhetResourceCache.put(ResourceLinkUtil.getSelfLinks(resource), resource)
-        }
-    }
+        @Header(KafkaHeaders.RECEIVED_KEY, required = false) key: String?,
+    ) = administrativEnhetResourceCache.update(key, resource)
 
     @KafkaListener(topics = ["#{@arkivressursResourceTopic.name}"])
     fun onArkivressursResource(
         @Payload(required = false) resource: ArkivressursResource?,
-        @Header(KafkaHeaders.RECEIVED_KEY) key: String,
-    ) {
-        if (resource == null) {
-            arkivressursResourceCache.remove(key)
-        } else {
-            arkivressursResourceCache.put(ResourceLinkUtil.getSelfLinks(resource), resource)
-        }
-    }
+        @Header(KafkaHeaders.RECEIVED_KEY, required = false) key: String?,
+    ) = arkivressursResourceCache.update(key, resource)
 
     @KafkaListener(topics = ["#{@saksstatusResourceTopic.name}"])
     fun onSaksstatusResource(
         @Payload(required = false) resource: SaksstatusResource?,
-        @Header(KafkaHeaders.RECEIVED_KEY) key: String,
-    ) {
-        if (resource == null) {
-            saksstatusResourceCache.remove(key)
-        } else {
-            saksstatusResourceCache.put(ResourceLinkUtil.getSelfLinks(resource), resource)
-        }
-    }
+        @Header(KafkaHeaders.RECEIVED_KEY, required = false) key: String?,
+    ) = saksstatusResourceCache.update(key, resource)
 
     @KafkaListener(topics = ["#{@personalressursResourceTopic.name}"])
     fun onPersonalressursResource(
         @Payload(required = false) resource: PersonalressursResource?,
-        @Header(KafkaHeaders.RECEIVED_KEY) key: String,
-    ) {
-        if (resource == null) {
-            personalressursResourceCache.remove(key)
-        } else {
-            personalressursResourceCache.put(ResourceLinkUtil.getSelfLinks(resource), resource)
-        }
-    }
+        @Header(KafkaHeaders.RECEIVED_KEY, required = false) key: String?,
+    ) = personalressursResourceCache.update(key, resource)
 
     @KafkaListener(topics = ["#{@personResourceTopic.name}"])
     fun onPersonResource(
         @Payload(required = false) resource: PersonResource?,
-        @Header(KafkaHeaders.RECEIVED_KEY) key: String,
+        @Header(KafkaHeaders.RECEIVED_KEY, required = false) key: String?,
+    ) = personResourceCache.update(key, resource)
+
+    /**
+     * A resource is cached under every self link. A tombstone removes all of them, found through the cached resource
+     * under the record key (archive-gateway keys records with the first self link).
+     */
+    private fun <R : FintLinks> FlytCache<String, R>.update(
+        key: String?,
+        resource: R?,
     ) {
-        if (resource == null) {
-            personResourceCache.remove(key)
-        } else {
-            personResourceCache.put(ResourceLinkUtil.getSelfLinks(resource), resource)
+        if (resource != null) {
+            put(ResourceLinkUtil.getSelfLinks(resource), resource)
+        } else if (key != null) {
+            getOrNull(key)?.let { remove(ResourceLinkUtil.getSelfLinks(it)) }
+            remove(key)
         }
     }
 

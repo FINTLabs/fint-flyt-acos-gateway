@@ -15,7 +15,7 @@ class ResourceEntityConsumersTest {
     private val listeners = ResourceEntityConsumersConfiguration(mock(), mock(), cache, mock(), mock())
 
     @Test
-    fun `Jackson 3 resource is cached by every self link and tombstone removes its key`() {
+    fun `Jackson 3 resource is cached by every self link and tombstone removes all of them`() {
         val original =
             SaksstatusResource().apply {
                 addSelf(Link.with("https://fint.test/status/1"))
@@ -29,6 +29,17 @@ class ResourceEntityConsumersTest {
 
         listeners.onSaksstatusResource(null, "https://fint.test/status/1")
         assertThat(cache.getOrNull("https://fint.test/status/1")).isNull()
+        assertThat(cache.getOrNull("https://fint.test/status/B")).isNull()
+    }
+
+    @Test
+    fun `record without a key is cached, and a tombstone without a key is ignored`() {
+        val resource = SaksstatusResource().apply { addSelf(Link.with("https://fint.test/status/2")) }
+        listeners.onSaksstatusResource(resource, null)
+        assertThat(cache.get("https://fint.test/status/2")).isSameAs(resource)
+
+        listeners.onSaksstatusResource(null, null)
+        assertThat(cache.get("https://fint.test/status/2")).isSameAs(resource)
     }
 
     @Test
