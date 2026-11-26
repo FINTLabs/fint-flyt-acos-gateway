@@ -2,5 +2,5 @@ novari:
   flyt:
     security:
       external:
-        source-application-id: 1
+        source-application: ACOS
         paths: /api/acos/**

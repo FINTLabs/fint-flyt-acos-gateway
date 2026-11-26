@@ -28,7 +28,7 @@ spec:
     enabled: true
     basePath: path
   env:
-    - name: novari.flyt.security.external.expected-client-id
+    - name: fint.flyt.acos.sso.client-id
       valueFrom:
         secretKeyRef:
           name: fint-flyt-acos-oauth2-client

@@ -68,7 +68,7 @@ dependencies {
     implementation("no.novari:fint-arkiv-resource-model-java:$fintResourceModelVersion")
     implementation("no.novari:fint-administrasjon-resource-model-java:$fintResourceModelVersion")
 
-    implementation("no.novari:flyt-gateway-starter:6.0.0-rc-5")
+    implementation("no.novari:flyt-gateway-starter:6.0.0-rc-6")
     implementation("no.novari:flyt-cache:4.0.0-rc-5")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -33,9 +33,9 @@ or deactivated integrations. Missing archive cases return 404.
 
 ## Configuration
 
-`application.yaml` includes the Kafka, security, logging and OAuth client profiles. Configure
-`novari.flyt.security.external.expected-client-id` from secret `fint-flyt-acos-oauth2-client`, key
-`fint.flyt.acos.sso.client-id`. The source application ID is 1 and the external path is `/api/acos/**`.
+`application.yaml` includes the Kafka, security, logging and OAuth client profiles. The source
+application is `ACOS` (`novari.flyt.security.external.source-application`) and the external path is `/api/acos/**`.
+The client ID `fint.flyt.acos.sso.client-id` comes from secret `fint-flyt-acos-oauth2-client`, same key.
 Authorization-service owns the NAM declaration in afk-no, bfk-no and ofk-no (api and beta). All Acos overlays inherit
 the secret reference from the base. Only the client ID is needed for inbound authorization.
 

@@ -41,7 +41,7 @@ import java.util.UUID
         "spring.kafka.listener.auto-startup=false",
         "spring.kafka.admin.auto-create=false",
         "novari.flyt.gateway-starter.check-integration-exists=false",
-        "novari.flyt.security.external.expected-client-id=acos-client",
+        "fint.flyt.acos.sso.client-id=acos-client",
         "fint.flyt.authorization.sso.client-id=internal-client",
         "fint.flyt.authorization.sso.client-secret=test",
         "fint.sso.client-id=file-client",
